@@ -46,11 +46,11 @@ function create() {
             <div class="row break">
                 <label class="row">
                     <span>查找</span>
-                    <input uxp-quiet="true" id="pattern" value="abc" placeholder="查找" />
+                    <input type="text" uxp-quiet="true" id="pattern" value="abc" placeholder="查找" />
                 </label>
                 <label class="row">
                     <span>替换</span>
-                    <input uxp-quiet="true" id="replacement" value="xyz" placeholder="替换" />
+                    <input type="text" uxp-quiet="true" id="replacement" value="xyz" placeholder="替换" />
                 </label>
             </div>
             <footer><button id="ok" type="submit" uxp-variant="cta">Apply</button></footer>
@@ -59,8 +59,8 @@ function create() {
         `
     function increaseRectangleSize() {
         const { editDocument } = require("application");
-        const pattern = Number(document.querySelector("#pattern").value);
-        const replacement = Number(document.querySelector("#replacement").value);
+        const pattern = document.querySelector("#pattern").value;
+        const replacement = document.querySelector("#replacement").value;
 
         editDocument({ editLabel: "find and replace" }, function (selection) {
             let select = selection.items;
