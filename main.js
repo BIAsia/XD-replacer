@@ -1,5 +1,24 @@
-const { selection } = require("scenegraph")
+const { selection, Text } = require("scenegraph")
+
 let panel;
+
+function traverseChildren(root, pattern, replacement){
+    if (root.isContainer){
+        root.children.forEach((children,i)=>{
+            traverseChildren(children, pattern, replacement);
+        })
+    } else {
+        // console.log(root)
+		if (root.constructor.name == "Text"){
+            // console.log("text!")
+            console.log(pattern+' '+replacement)
+            let success = root.text.replaceAll(pattern, replacement)
+            // console.log(success)
+            root.text = success
+            console.log(success+' vs '+root.text)
+        }		// 对图层的操作
+    }
+}
 
 function create() {
     const HTML =
@@ -26,27 +45,26 @@ function create() {
         <form method="dialog" id="main">
             <div class="row break">
                 <label class="row">
-                    <span>↕︎</span>
-                    <input type="number" uxp-quiet="true" id="txtV" value="10" placeholder="Height" />
+                    <span>查找</span>
+                    <input uxp-quiet="true" id="pattern" value="abc" placeholder="查找" />
                 </label>
                 <label class="row">
-                    <span>↔︎</span>
-                    <input type="number" uxp-quiet="true" id="txtH" value="10" placeholder="Width" />
+                    <span>替换</span>
+                    <input uxp-quiet="true" id="replacement" value="xyz" placeholder="替换" />
                 </label>
             </div>
             <footer><button id="ok" type="submit" uxp-variant="cta">Apply</button></footer>
         </form>
-        <p id="warning">This plugin requires you to select a rectangle in the document. Please select a rectangle.</p>
+        <p id="warning">请选中需要查找替换的范围（画板、 组、 文字图层等等均可）</p>
         `
     function increaseRectangleSize() {
         const { editDocument } = require("application");
-        const height = Number(document.querySelector("#txtV").value);
-        const width = Number(document.querySelector("#txtH").value);
+        const pattern = Number(document.querySelector("#pattern").value);
+        const replacement = Number(document.querySelector("#replacement").value);
 
-        editDocument({ editLabel: "Increase rectangle size" }, function (selection) {
-            const selectedRectangle = selection.items[0];
-            selectedRectangle.width += width
-            selectedRectangle.height += height
+        editDocument({ editLabel: "find and replace" }, function (selection) {
+            let select = selection.items;
+            select.forEach((obj)=>{traverseChildren(obj, pattern, replacement);});
         })
     }
 
@@ -62,10 +80,9 @@ function show(event) {
 }
 
 function update() {
-    const { Rectangle } = require("scenegraph");
     let form = document.querySelector("form");
     let warning = document.querySelector("#warning");
-    if (!selection || !(selection.items[0] instanceof Rectangle)) {
+    if (!selection) {
         form.className = "hide";
         warning.className = "show";
     } else {
