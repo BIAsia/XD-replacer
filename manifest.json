@@ -1,0 +1,30 @@
+{
+  "id": "9ed7d3f6",
+  "name": "Replacer",
+  "host": [
+    {
+      "app": "XD",
+      "minVersion": "22.0.0"
+    }
+  ],
+  "version": "0.1.0",
+  "icons": [
+    {
+      "width": 24,
+      "height": 24,
+      "path": "images/icon@1x.png"
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "path": "images/icon@2x.png"
+    }
+  ],
+  "uiEntryPoints": [
+    {
+      "type": "panel",
+      "label": "Enlarge a Rectangle",
+      "panelId": "enlargeRectangle"
+    }
+  ]
+}
