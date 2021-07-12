@@ -2,8 +2,14 @@ const { selection } = require("scenegraph")
 
 let panel;
 
-function traverseChildren(root, pattern, replacement){
+function traverseChildren(root, pattern, replacement, board, same){
     if (root.isContainer){
+        if (board && root.constructor.name == "Artboard"){
+            let after = root.name.replaceAll(pattern, replacement)
+            if (after != root.name){
+                root.name = after
+            }
+        }
         if (root.constructor.name != "SymbolInstance"){
             root.children.forEach((children,i)=>{
                 traverseChildren(children, pattern, replacement);
@@ -13,15 +19,23 @@ function traverseChildren(root, pattern, replacement){
         // console.log(root)
 		if (root.constructor.name == "Text"){
             // console.log("text!")
-            console.log(pattern+' '+replacement)
-            let after = root.text.replaceAll(pattern, replacement)
-            // console.log(success)
-            if ( after != root.text ) {
-                root.text = after
-                console.log('changed!')
+            if (same == false)
+            {
+                console.log('same=false')
+                let after = root.text.replaceAll(pattern, replacement)
+                // console.log(success)
+                if ( after != root.text ) {
+                    root.text = after
+                    console.log('changed!')
+                }
+                
+                console.log(after+' vs '+root.text)
+            } else {
+                console.log('same=true')
+                if (root.text == pattern){
+                    root.text = replacement
+                }
             }
-            
-            console.log(after+' vs '+root.text)
         }		// 对图层的操作
     }
 }
@@ -29,6 +43,7 @@ function traverseChildren(root, pattern, replacement){
 function create() {
     const HTML =
         `<style>
+            .box-row { align-items: center; }
             .break {
                 flex-wrap: wrap;
             }
@@ -58,7 +73,16 @@ function create() {
                     <span>替换</span>
                     <input type="text" uxp-quiet="true" id="replacement" value="xyz" placeholder="替换" />
                 </label>
+                
             </div>
+            <label class="box-row">
+                    <input type="checkbox" checked="true" id="board"/>
+                    <span>包括画板名称</span>
+            </label>
+            <label class="box-row">
+                    <input type="checkbox" id="same"/>
+                    <span>完全匹配</span>
+            </label>
             <footer><button id="ok" type="submit" uxp-variant="cta">Apply</button></footer>
         </form>
         <p id="warning">请选中需要查找替换的范围（画板、 组、 文字图层等等均可）。对组件无效。</p>
@@ -67,10 +91,12 @@ function create() {
         const { editDocument } = require("application");
         const pattern = document.querySelector("#pattern").value;
         const replacement = document.querySelector("#replacement").value;
+        const board = document.querySelector("#board").ischecked;
+        const same = document.querySelector("#same").ischecked;
 
         editDocument({ editLabel: "find and replace" }, function (selection) {
             let select = selection.items;
-            select.forEach((obj)=>{traverseChildren(obj, pattern, replacement);});
+            select.forEach((obj)=>{traverseChildren(obj, pattern, replacement, board, same);});
 
         })
     }
