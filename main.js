@@ -12,7 +12,7 @@ function traverseChildren(root, pattern, replacement, board, same){
         }
         if (root.constructor.name != "SymbolInstance"){
             root.children.forEach((children,i)=>{
-                traverseChildren(children, pattern, replacement);
+                traverseChildren(children, pattern, replacement, board, same);
             })
         }
     } else {
@@ -91,8 +91,8 @@ function create() {
         const { editDocument } = require("application");
         const pattern = document.querySelector("#pattern").value;
         const replacement = document.querySelector("#replacement").value;
-        const board = document.querySelector("#board").ischecked;
-        const same = document.querySelector("#same").ischecked;
+        const board = document.querySelector("#board").checked;
+        const same = document.querySelector("#same").checked;
 
         editDocument({ editLabel: "find and replace" }, function (selection) {
             let select = selection.items;
